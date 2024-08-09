@@ -5,6 +5,4 @@ from django.db import models
 
 class SensorData(models.Model):
     temperature = models.FloatField()
-    timestamp = models.DateTimeField()
-    date = models.DateField()
 
