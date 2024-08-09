@@ -1,11 +1,9 @@
 from django.urls import path, include
-from rest_framework.routers import DefaultRouter
-from .views import SensorDataViewSet
 
-router = DefaultRouter()
-router.register(r'sensor-data', SensorDataViewSet)
+from .views import SensorDataCreateAPIView , SensorDataListAPIView
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path('sensor-data/', SensorDataListAPIView.as_view(), name='sensor-data-list'),
+    path('sensor-data/create/', SensorDataCreateAPIView.as_view(), name='sensor-data-create'),
 ]
 
