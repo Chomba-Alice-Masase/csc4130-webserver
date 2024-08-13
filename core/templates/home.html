@@ -7,20 +7,10 @@
 <body>
     <h1>Recent Temperature Readings</h1>
     <p>Hello, You are on the server!</p>
-
-    <table border="1">
-        <thead>
-            <tr>
-                <th>Temperature (°C)</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for data in sensor_data %}
-                <tr>
-                    <td>{{ data.temperature }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <ol>
+        {% for reading in sensor_data %}
+            <li>{{ reading.temperature }} °C</li>
+        {% endfor %}
+    </ol>
 </body>
 </html>
