@@ -18,3 +18,9 @@ class SensorDataListAPIView(generics.ListAPIView):
 
 class TempView(View):
     template_name = 'home.html'
+
+    def get(self, request):
+        sensor_data = SensorData.objects.all().order_by('-id')
+
+        context = {'sensor_data': sensor_data}
+        return render(request, self.template_name, context)

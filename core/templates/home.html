@@ -2,9 +2,25 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Temperature</title>
+    <title>Temperature Readings</title>
 </head>
 <body>
-    <p>Hello You are on the server!</p>
+    <h1>Recent Temperature Readings</h1>
+    <p>Hello, You are on the server!</p>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Temperature (°C)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for data in sensor_data %}
+                <tr>
+                    <td>{{ data.temperature }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </body>
 </html>
