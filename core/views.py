@@ -25,6 +25,7 @@ class TempView(View):
         context = {'sensor_data': sensor_data}
         return render(request, self.template_name, context)
 
+
 class LatestTemperatureData(View):
     def get(self, request):
         sensor_data = SensorData.objects.all().order_by('-id')[:10]  # Fetch last 10 readings
