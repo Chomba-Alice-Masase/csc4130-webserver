@@ -39,7 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'channels',
 ]
+
+ASGI_APPLICATION = 'csc4130WebServer.asgi.application'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

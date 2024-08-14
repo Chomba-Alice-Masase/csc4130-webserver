@@ -7,10 +7,22 @@
 <body>
     <h1>Recent Temperature Readings</h1>
     <p>Hello, You are on the server!</p>
-    <ol>
-        {% for reading in sensor_data %}
-            <li>{{ reading.temperature }} °C</li>
-        {% endfor %}
-    </ol>
+    <ol id="temperature-list"></ol>
+
+    <script>
+        var socket = new WebSocket('ws://' + window.location.host + '/ws/temperature/');
+
+        socket.onmessage = function(e) {
+            var data = JSON.parse(e.data);
+            var list = document.getElementById("temperature-list");
+            var entry = document.createElement('li');
+            entry.appendChild(document.createTextNode(data.temperature + " °C"));
+            list.appendChild(entry);
+        };
+
+        socket.onclose = function(e) {
+            console.error('WebSocket closed unexpectedly');
+        };
+    </script>
 </body>
 </html>
