@@ -29,5 +29,6 @@ class TempView(View):
 class LatestTemperatureData(View):
     def get(self, request):
         sensor_data = SensorData.objects.all().order_by('-id')[:10]  # Fetch last 10 readings
-        data = list(sensor_data.values('temperature', 'id'))
+        data = list(sensor_data.values('temperature', 'humidity', 'id'))  # Include humidity in the data
         return JsonResponse(data, safe=False)
+
