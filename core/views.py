@@ -8,6 +8,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 import json
 
+
 # This file contains data regarding the views that make the API calls.
 
 @method_decorator(csrf_exempt, name='dispatch')  # Apply csrf_exempt to the entire class
@@ -44,22 +45,14 @@ relay_state = "off"  # This will store the current relay state
 @csrf_exempt
 def relay_control(request):
     global relay_state
+    if request.method == 'POST':
+        body = json.loads(request.body)
+        new_state = body.get('relay')
+        if new_state in ['on', 'off']:
+            relay_state = new_state  # Set the new relay state
+            return JsonResponse({'relay': relay_state})
+        else:
+            return JsonResponse({'error': 'Invalid command'}, status=400)
 
-    if request.method == "GET":
-        # Return the current state of the relay
-        return JsonResponse({"relay": relay_state})
-
-    elif request.method == "POST":
-        # Change the state of the relay based on the client's request
-        try:
-            data = json.loads(request.body)
-            new_state = data.get("relay")
-
-            if new_state in ["on", "off"]:
-                relay_state = new_state
-                return JsonResponse({"relay": relay_state}, status=200)
-            else:
-                return JsonResponse({"error": "Invalid relay state"}, status=400)
-
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "Bad request"}, status=400)
+    elif request.method == 'GET':
+        return JsonResponse({'relay': relay_state})

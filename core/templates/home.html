@@ -75,20 +75,23 @@
         <canvas id="envChart"></canvas>
     </div>
 
-    <div>
-        <h2>Relay Control</h2>
-        <button id="relayButton" onclick="toggleRelay()">Turn On</button>
+    <!-- Form to type "on" or "off" -->
+    <div style="margin-top: 20px;">
+        <form id="relayForm">
+            <input type="text" id="relayCommand" placeholder="Type 'on' or 'off'" required>
+            <button type="submit">Send Command</button>
+        </form>
+        <p id="relayResponse"></p>
     </div>
 
     <script type="text/javascript">
         let temperatureData = [];
         let humidityData = [];
         let labels = [];
-        let relayStatus = "off";  // Default relay status
 
         function fetchSensorData() {
             $.ajax({
-                url: "{% url 'latest-temperature-data' %}",  // Adjust this URL if needed
+                url: "{% url 'latest-temperature-data' %}",
                 method: "GET",
                 success: function(data) {
                     if (data.length > 0) {
@@ -96,12 +99,11 @@
                         $('#temperature').text(latest.temperature + ' °C');
                         $('#humidity').text(latest.humidity + ' %');
 
-                        // Update chart data
                         temperatureData.push(latest.temperature);
                         humidityData.push(latest.humidity);
                         labels.push(new Date().toLocaleTimeString());
 
-                        if (temperatureData.length > 10) {  // Keep only the last 10 readings
+                        if (temperatureData.length > 10) {
                             temperatureData.shift();
                             humidityData.shift();
                             labels.shift();
@@ -116,16 +118,33 @@
             });
         }
 
-        // Fetch data every 5 seconds
-        setInterval(fetchSensorData, 5000);
-
-        // Initial fetch on page load
         $(document).ready(function() {
-            fetchSensorData();
-            fetchRelayStatus();  // Fetch the initial relay status when the page loads
+            // Fetch sensor data every 5 seconds
+            setInterval(fetchSensorData, 5000);
+            fetchSensorData(); // Initial fetch on page load
+
+            // Handle relay form submission
+            $('#relayForm').submit(function(e) {
+                e.preventDefault();
+                let command = $('#relayCommand').val().toLowerCase(); // Get command input
+
+                // Send POST request to relay control
+                $.ajax({
+                    url: "{% url 'relay-control' %}",
+                    method: "POST",
+                    data: JSON.stringify({ relay: command }),
+                    contentType: 'application/json',
+                    success: function(response) {
+                        $('#relayResponse').text(`Relay is now ${response.relay}`);
+                    },
+                    error: function(xhr, status, error) {
+                        $('#relayResponse').text('Error controlling relay.');
+                        console.error('Error:', error);
+                    }
+                });
+            });
         });
 
-        // Initialize Chart.js
         const ctx = document.getElementById('envChart').getContext('2d');
         const envChart = new Chart(ctx, {
             type: 'line',
@@ -165,38 +184,6 @@
                 }
             }
         });
-
-        // Relay control functions
-        function toggleRelay() {
-            const newStatus = relayStatus === "off" ? "on" : "off";
-            $.ajax({
-                url: "/chomba-alice-masase/relay-control/",
-                method: "POST",
-                data: JSON.stringify({ "relay": newStatus }),
-                contentType: "application/json",
-                success: function(response) {
-                    relayStatus = response.relay;
-                    document.getElementById("relayButton").textContent = relayStatus === "on" ? "Turn Off" : "Turn On";
-                },
-                error: function(xhr, status, error) {
-                    console.error("Error controlling relay:", error);
-                }
-            });
-        }
-
-        function fetchRelayStatus() {
-            $.ajax({
-                url: "/chomba-alice-masase/relay-control/",
-                method: "GET",
-                success: function(response) {
-                    relayStatus = response.relay;
-                    document.getElementById("relayButton").textContent = relayStatus === "on" ? "Turn Off" : "Turn On";
-                },
-                error: function(xhr, status, error) {
-                    console.error("Error fetching relay status:", error);
-                }
-            });
-        }
     </script>
 </body>
 </html>
