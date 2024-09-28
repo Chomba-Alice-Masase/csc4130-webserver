@@ -11,10 +11,10 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
-
+import os
+from dotenv import load_dotenv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -26,7 +26,18 @@ SECRET_KEY = 'django-insecure-lg3c(!hwf4mw2mk8t-yf!=#l5)!6$#m090l^mm&#+x0ey3=he-
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
+import os
+from dotenv import load_dotenv
 
+# Load environment variables from .env file
+load_dotenv()
+
+# Access environment variables
+CLIENT_ID = os.getenv("CLIENT_ID")
+PASSWORD = os.getenv("PASSWORD")
+
+# To access a boolean variable, make it a conditional.
+DEBUG = os.getenv("DEBUG") == "True"
 
 # Application definition
 
@@ -77,25 +88,22 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'csc4130WebServer.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'weatherdb',   # Database name
-        'USER': 'Arisu',            # MySQL username
-        'PASSWORD': 'ArisuAdmin',    # MySQL password
-        'HOST': 'localhost',            # Database host
-        'PORT': '3306',                 # MySQL port (default is 3306)
+        'NAME': 'weatherdb',  # Database name
+        'USER': 'Arisu',  # MySQL username
+        'PASSWORD': 'ArisuAdmin',  # MySQL password
+        'HOST': 'localhost',  # Database host
+        'PORT': '3306',  # MySQL port (default is 3306)
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
         }
     }
 }
-
-
 
 # Password validation
 
@@ -125,7 +133,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
@@ -136,7 +143,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
