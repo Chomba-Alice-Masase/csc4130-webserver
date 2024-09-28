@@ -83,10 +83,18 @@ WSGI_APPLICATION = 'csc4130WebServer.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'weatherdb',   # Database name
+        'USER': 'Arisu',            # MySQL username
+        'PASSWORD': 'ArisuAdmin',    # MySQL password
+        'HOST': 'localhost',            # Database host
+        'PORT': '3306',                 # MySQL port (default is 3306)
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        }
     }
 }
+
 
 
 # Password validation
