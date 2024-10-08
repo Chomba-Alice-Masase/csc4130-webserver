@@ -70,12 +70,16 @@
             <h2>Humidity</h2>
             <p id="humidity">-- %</p>
         </div>
+        <div class="card">
+            <h2>Door State</h2>
+            <p id="doorState">--</p>
+        </div>
     </div>
     <div class="chart-container">
         <canvas id="envChart"></canvas>
     </div>
 
-    <!-- Form to type "on" or "off" -->
+    <!-- Form to type "on" or "off" for the relay -->
     <div style="margin-top: 20px;">
         <form id="relayForm">
             <input type="text" id="relayCommand" placeholder="Type 'on' or 'off'" required>
@@ -113,15 +117,31 @@
                     }
                 },
                 error: function(xhr, status, error) {
-                    console.error("Error fetching data:", error);
+                    console.error("Error fetching sensor data:", error);
+                }
+            });
+        }
+
+        function fetchDoorState() {
+            $.ajax({
+                url: "{% url 'access-control' %}",
+                method: "GET",
+                success: function(data) {
+                    $('#doorState').text(data.access_state === "open" ? "Open" : "Closed");
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error fetching door state:", error);
                 }
             });
         }
 
         $(document).ready(function() {
-            // Fetch sensor data every 5 seconds
+            // Fetch sensor data and door state every 5 seconds
             setInterval(fetchSensorData, 5000);
+            setInterval(fetchDoorState, 5000);
+
             fetchSensorData(); // Initial fetch on page load
+            fetchDoorState();  // Initial fetch on page load
 
             // Handle relay form submission
             $('#relayForm').submit(function(e) {

@@ -1,3 +1,4 @@
+# Import necessary modules
 from django.shortcuts import render
 from rest_framework import generics
 from .models import SensorData
@@ -7,7 +8,6 @@ from django.http import JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 import json
-
 
 # This file contains data regarding the views that make the API calls.
 
@@ -27,7 +27,6 @@ class TempView(View):  # This is our home view for our web app.
 
     def get(self, request):
         sensor_data = SensorData.objects.all().order_by('-id')
-
         context = {'sensor_data': sensor_data}
         return render(request, self.template_name, context)
 
@@ -40,6 +39,7 @@ class LatestTemperatureData(View):  # This fetches the posted data and displays 
 
 
 relay_state = "off"  # This will store the current relay state
+access_state = "closed"  # Default state for the door
 
 
 @csrf_exempt
@@ -56,3 +56,21 @@ def relay_control(request):
 
     elif request.method == 'GET':
         return JsonResponse({'relay': relay_state})
+
+@csrf_exempt
+def access_control(request):
+    global access_state
+    if request.method == 'POST':
+        body = json.loads(request.body)
+        access_granted = body.get('access_granted')
+
+        if access_granted:
+            access_state = "open"  # Door is open
+        else:
+            access_state = "closed"  # Door remains closed
+
+        return JsonResponse({'access_state': access_state})
+
+    elif request.method == 'GET':
+        return JsonResponse({'access_state': access_state})
+
